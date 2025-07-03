@@ -10,6 +10,7 @@ export default function SearchBox() {
     const [gender, setGender] = useState('');
     const [theme, setTheme] = useState('');
     const [loading, setLoading] = useState(false);
+    const [modalImage, setModalImage] = useState(null);
 
     const chatEndRef = useRef(null);
 
@@ -32,10 +33,16 @@ export default function SearchBox() {
             theme,
         });
 
+        const replyMessage = {
+          role: 'bot',
+          message: res.data.reply,
+          image: res.data.image_url || null
+        }
+
         // 마지막 메시지 업데이트
         setChatLog((prev) => {
             const updated = [...prev];
-            updated[updated.length - 1] = { role: 'bot', message: res.data.reply };
+            updated[updated.length - 1] = replyMessage;
             return updated;
         });
         } catch (err) {
@@ -79,8 +86,19 @@ export default function SearchBox() {
                 key={idx}
                 className={`chat-msg ${chat.role === 'user' ? 'right' : 'left'}`}
               >
-                <div className="bubble">{chat.message}</div>
-              </div>
+                <div className="msg-wrapper">
+                  <div className="bubble">{chat.message}</div>
+                    {chat.image && (
+                    <img
+                      src={chat.image}
+                      alt="추천 이미지"
+                      className="chat-image"
+                      onClick={() => setModalImage(chat.image)}
+                    />
+                    )}
+                  </div>
+                </div>
+              
             ))}
             <div ref={chatEndRef} />
           </div>
@@ -98,6 +116,14 @@ export default function SearchBox() {
         />
         <button className="submit-btn">➤</button>
       </div>
+      {modalImage && (
+        <div className="image-modal" onClick={() => setModalImage(null)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-button" onClick={() => setModalImage(null)}>×</button>
+            <img src={modalImage} alt="확대 이미지" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

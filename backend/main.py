@@ -72,7 +72,8 @@ async def hello(req: MessageRequest):
     except Exception as e:
         return {"reply": f"OpenAI 호출 오류: {str(e)}"}
     
-    return {"reply": user_input}
+    return {"reply": user_input,
+            "image_url":"https://images.unsplash.com/photo-1506744038136-46273834b3fb"}
 
 @app.get("/api/graph")
 def get_graph_image():
