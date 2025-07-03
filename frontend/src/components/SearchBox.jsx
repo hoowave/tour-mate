@@ -32,6 +32,7 @@ export default function SearchBox() {
             age,
             gender,
             theme,
+            duration
         });
 
         const replyMessage = {
@@ -83,11 +84,12 @@ export default function SearchBox() {
       <div className="filters">
         <select value={age} onChange={(e) => setAge(e.target.value)}>
           <option value="">연령대</option>
-          <option value="10대">10대</option>
           <option value="20대">20대</option>
           <option value="30대">30대</option>
           <option value="40대">40대</option>
-          <option value="50대 이상">50대 이상</option>
+          <option value="50대">50대</option>
+          <option value="60대">60대</option>
+          <option value="70대 이상">70대 이상</option>
         </select>
 
         <select value={gender} onChange={(e) => setGender(e.target.value)}>
@@ -103,13 +105,18 @@ export default function SearchBox() {
           <option value="휴양">휴양</option>
           <option value="맛집 탐방">맛집 탐방</option>
           <option value="액티비티">액티비티</option>
+          <option value="쇼핑">쇼핑</option>
+          <option value="관광">관광</option>
         </select>
 
         <select value={duration} onChange={(e) => setDuration(e.target.value)}>
           <option value="">여행 기간</option>
+          <option value="하루">하루</option>
           <option value="1박 2일">1박 2일</option>
           <option value="2박 3일">2박 3일</option>
-          <option value="3박 이상">3박 이상</option>
+          <option value="3박 4일">3박 4일</option>
+          <option value="4박 5일">4박 5일</option>
+          <option value="5일 이상">5일 이상</option>
         </select>
       </div>
 
