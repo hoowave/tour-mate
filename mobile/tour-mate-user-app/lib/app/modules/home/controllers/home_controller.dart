@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:tour_mate_user_app/app/data/model/chat_model.dart';
 import 'package:tour_mate_user_app/app/modules/home/views/widgets/info_modal.dart';
+import 'package:tour_mate_user_app/app/routes/app_pages.dart';
 
 import '../../../data/service/networking/api_service.dart';
 
@@ -42,6 +43,10 @@ class HomeController extends GetxController {
         message: "Ai test data",
         timestamp: DateTime.now(),
       ));
+      return;
+    }
+    if(userInput.text.trim() == '/show me the admin'){
+      Get.offNamed(Routes.ADMIN);
       return;
     }
 
