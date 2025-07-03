@@ -27,7 +27,7 @@ class MessageRequest(BaseModel):
     age: str
     gender: str
     theme: str
-msg = []
+
 @app.post("/api/chat")
 async def hello(req: MessageRequest):
     try:
@@ -35,7 +35,6 @@ async def hello(req: MessageRequest):
         print('gender : ', req.gender)
         print('theme : ', req.theme)
         print('message : ', req.message)
-        msg1 = f"연령대: {req.age}, 성별: {req.gender}, 여행 테마: {req.theme}, 요청: {req.message}"
 
         intent_check_prompt = f"""
         다음 문장이 여행지 추천을 원하거나 여행 관련 요청인지 판단해줘.
@@ -46,7 +45,6 @@ async def hello(req: MessageRequest):
         - 여행추천
         - 일반대화
         """
-        msg.append(msg1)
 
         intent_response = client.chat.completions.create(
             model="gpt-4.1",
