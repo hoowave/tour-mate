@@ -27,6 +27,7 @@ class MessageRequest(BaseModel):
     age: str
     gender: str
     theme: str
+    duration: str
 
 @app.post("/api/chat")
 async def hello(req: MessageRequest):
@@ -35,6 +36,7 @@ async def hello(req: MessageRequest):
         print('gender : ', req.gender)
         print('theme : ', req.theme)
         print('message : ', req.message)
+        print('duration : ', req.duration)
 
         intent_check_prompt = f"""
         다음 문장이 여행지 추천을 원하거나 여행 관련 요청인지 판단해줘.
@@ -56,7 +58,8 @@ async def hello(req: MessageRequest):
             # 여기면 머신러닝 타서 함수 실행해야함.
             print('intent : ', intent)
             final_prompt = f"""
-            사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme}입니다.
+            사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme},
+            여행 기간은 {req.duration} 입니다.
             이 사용자에게 어울리는 여행지를 추천해 주세요. 요청: {req.message}
             """
         else:
