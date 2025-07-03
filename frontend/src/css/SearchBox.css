@@ -206,3 +206,21 @@ html, body {
   cursor: pointer;
   z-index: 1001;
 }
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-top: 30px;
+  flex-wrap: wrap; /* ✅ 화면 작으면 자동 줄바꿈 */
+  justify-content: center;
+}
+
+.filters select {
+  padding: 10px;
+  border: 2px solid #e94eff;
+  background-color: #111;
+  color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}

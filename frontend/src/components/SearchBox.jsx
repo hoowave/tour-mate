@@ -11,6 +11,7 @@ export default function SearchBox() {
     const [theme, setTheme] = useState('');
     const [loading, setLoading] = useState(false);
     const [modalImage, setModalImage] = useState(null);
+    const [duration, setDuration] = useState('');
 
     const chatEndRef = useRef(null);
 
@@ -77,6 +78,40 @@ export default function SearchBox() {
       <h1 className="title">
         Search with <span className="highlight">TourMate</span>
       </h1>
+
+      {/* 필터 UI */}
+      <div className="filters">
+        <select value={age} onChange={(e) => setAge(e.target.value)}>
+          <option value="">연령대</option>
+          <option value="10대">10대</option>
+          <option value="20대">20대</option>
+          <option value="30대">30대</option>
+          <option value="40대">40대</option>
+          <option value="50대 이상">50대 이상</option>
+        </select>
+
+        <select value={gender} onChange={(e) => setGender(e.target.value)}>
+          <option value="">성별</option>
+          <option value="남성">남성</option>
+          <option value="여성">여성</option>
+        </select>
+
+        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+          <option value="">여행 테마</option>
+          <option value="자연">자연</option>
+          <option value="역사">역사</option>
+          <option value="휴양">휴양</option>
+          <option value="맛집 탐방">맛집 탐방</option>
+          <option value="액티비티">액티비티</option>
+        </select>
+
+        <select value={duration} onChange={(e) => setDuration(e.target.value)}>
+          <option value="">여행 기간</option>
+          <option value="1박 2일">1박 2일</option>
+          <option value="2박 3일">2박 3일</option>
+          <option value="3박 이상">3박 이상</option>
+        </select>
+      </div>
 
       {hasChat && (
         <div className="chat-box">
