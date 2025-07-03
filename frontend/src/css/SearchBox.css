@@ -1,0 +1,140 @@
+/* ✅ 기본 배경 + 고정 레이아웃 */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #0a001a;
+  font-family: 'Arial', sans-serif;
+  /* overflow: hidden;      페이지 전체 스크롤 금지 */
+  height: 100vh;         /* 뷰포트 기준 높이 고정 */
+  width: 100vw;          /* 가로 고정 */
+  overscroll-behavior: none;
+}
+
+/* ✅ 전체 레이아웃 컨테이너 */
+.main-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 초기에는 중앙 정렬 */
+  transition: all 0.5s ease;
+  overflow: hidden; /* ✅ 내부 넘침 차단 */
+  color: white;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-container.shifted {
+  justify-content: flex-start;
+  padding-top: 50px; /* 채팅 있을 때 아래로 */
+}
+
+/* 제목 */
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.highlight {
+  color: #e94eff;
+}
+
+/* 입력창 */
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #111;
+  border: 2px solid #e94eff;
+  border-radius: 10px;
+  width: 400px;
+  padding: 10px 15px;
+  box-shadow: 0 0 15px #e94eff;
+  margin-top: 30px;
+  flex-shrink: 0;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  color: white;
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-box .icon {
+  margin-right: 10px;
+}
+
+.submit-btn {
+  background: transparent;
+  border: none;
+  color: #e94eff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ✅ 채팅창 */
+.chat-box {
+  background: white;
+  color: black;
+  width: 60%;
+  height: 600px;
+  overflow: hidden;
+  margin-top: 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  /* flex-shrink: 0; ✅ 높이 줄어드는 것 방지 */
+}
+
+/* 내부 스크롤 영역 */
+.chat-scroll {
+  padding: 20px;
+  overflow-y: auto;
+  height: 100%;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 채팅 말풍선 공통 */
+.chat-msg {
+  display: flex;
+}
+
+.chat-msg.left {
+  justify-content: flex-start;
+}
+
+.chat-msg.right {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 사용자 */
+.chat-msg.right .bubble {
+  background-color: #e94eff;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+/* GPT */
+.chat-msg.left .bubble {
+  background-color: #f1f1f1;
+  color: black;
+  border-bottom-left-radius: 0;
+}
