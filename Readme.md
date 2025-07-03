@@ -13,5 +13,16 @@
 3. 현재 경로 ~~/TOUR-MATE
 4. npx create-react-app frontend
 5. cd frontend
-6. npm install axios
+6. npm install axios react-router-dom
+
+# 4. 실행
+
+1. cd ~/backend
+2. uvicorn main:app --reload
+3. FAST API 실행 완료
+
+4. cd ~/frontend
+5. npm start
+6. React 실행 완료
+
 
