@@ -1,23 +1,34 @@
 import './App.css';
+import SearchBox from './components/SearchBox';
+import Sidebar from './components/Sidebar';
+import GraphPage from './pages/graph';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
 
 function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+    {/* 로고 버튼 */}
+        <img
+          src={"/logo.png"}
+          alt="로고"
+          onClick={toggleSidebar}
+          className="logo-button"
+        />
+
+        <Sidebar isOpen={isSidebarOpen} />
+      <Routes>
+
+
+        <Route path='/' element={<SearchBox />} />
+        <Route path='/graph' element={<GraphPage />} />
+      </Routes>
+      
+    </BrowserRouter>
   );
 }
 
