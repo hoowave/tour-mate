@@ -13,6 +13,7 @@ def get_service():
 def index():
     return {"Hello": "World"}
 
+# 실제 요청받는 API
 @router.post("/request")
 def reuqest(
     request: RequestDto,
@@ -26,9 +27,18 @@ def reuqest(
         "days": request.days
     }
 
+# 테스트용
 @router.get("/test")
 def test(
     service: Service = Depends(get_service)
 ):
     response = service.request()
+    return response
+
+# 테스트용
+@router.get("/test2")
+def test(
+    service: Service = Depends(get_service)
+):
+    response = service.ktoTest()
     return response
