@@ -40,5 +40,5 @@ def test(
 def test(
     service: Service = Depends(get_service)
 ):
-    response = service.ktoTest()
+    response = service.kto_api_test()
     return response

@@ -9,7 +9,7 @@ class KtoApiAgent:
         load_dotenv()
         self.__API_KEY = os.getenv('KTO_API_KEY')
 
-    def request(self, area_code):
+    def request(self, si_code, gu_code=None):
         url = "http://apis.data.go.kr/B551011/KorService2/searchFestival2"
         start_date = (datetime.today() - timedelta(days=7)).strftime("%Y%m%d")
         end_date = (datetime.today() + timedelta(days=7)).strftime("%Y%m%d")
@@ -20,21 +20,30 @@ class KtoApiAgent:
             "MobileOS": "ETC",
             "MobileApp": "TourChat",
             "arrange": "R",
-            "areaCode": area_code,
+            "areaCode": si_code,
+            "sigunguCode": gu_code,
             "serviceKey": self.__API_KEY,
             "eventStartDate": start_date,
             "eventEndDate": end_date,
             "_type": "json"
         }
 
-        response = requests.get(url, params=params)
-        data = response.json()
-        items = data["response"]["body"]["items"]["item"]
+        try:
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+
+            items = data["response"]["body"]["items"]["item"]
+            if isinstance(items, dict):
+                items = [items]
+        except Exception as e:
+            print(f"API 요청 오류 또는 데이터 없음: {e}")
+            items = []
+
         dto_list = [KtoApiDto.from_dict(item) for item in items]
         return dto_list
 
-    def get_area_codes(self, region_name, subregion_name=None):
-        print(f"[DEBUG] API KEY: {self.__API_KEY}")
+    def get_si_code(self, region_name):
         base_url = "http://apis.data.go.kr/B551011/KorService2/areaCode2"
 
         params = {
@@ -49,22 +58,32 @@ class KtoApiAgent:
         region_list = r.json()["response"]["body"]["items"]["item"]
 
         region_code = None
-        subregion_code = None
 
         for region in region_list:
             if region_name in region["name"]:
                 region_code = region["code"]
                 break
 
-        # Step 2: 시군구 코드 (옵션)
-        if region_code and subregion_name:
-            params["areaCode"] = region_code
-            r2 = requests.get(base_url, params=params)
-            subregion_list = r2.json()["response"]["body"]["items"]["item"]
+        return region_code
+    
+    def get_gu_code(self, si_code, region_name):
+        base_url = "http://apis.data.go.kr/B551011/KorService2/areaCode2"
 
-            for sub in subregion_list:
-                if subregion_name in sub["name"]:
-                    subregion_code = sub["code"]
-                    break
+        params = {
+            "serviceKey": self.__API_KEY,
+            "MobileOS": "ETC",
+            "MobileApp": "TourChat",
+            "numOfRows": 25,
+            "areaCode": si_code,
+            "_type": "json"
+        }
 
-        return region_code, subregion_code
+        response = requests.get(base_url, params=params)
+        response_json = response.json()
+        region_list = response_json["response"]["body"]["items"]["item"]
+
+        region_code = None
+        for region in region_list:
+            if region_name.strip() == region["name"].strip():
+                region_code = region["code"]
+        return region_code
