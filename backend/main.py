@@ -9,14 +9,33 @@ import matplotlib.pyplot as plt
 import io
 from fastapi.responses import StreamingResponse
 import json
+from model.model_1 import run, show_graph
+from fastapi import HTTPException
 
 chat_session = [] # 대화 세션 유지 용도
+# 전역 변수 선언
+global_model = None
+global_top_5 = None
 
 def travel_list(Age, Gender, Theme):
+    global global_model, global_top_5
+    filepath = './model/final_file_cleaned.csv'
+    modelpath = './catboost_model.cbm'
     print('Age : ', Age)
     print('Gender : ', Gender)
     print('Theme : ', Theme)
     print("travel_list!!")
+
+    print('================== Start Model ==================')
+    model, top_5 = run(Age, Gender, Theme, filepath, modelpath)
+    global_model = model
+    global_top_5 = top_5
+    # show_graph(model, top_5, filepath)
+    print('==================  END Model  ==================')
+    if global_model is not None and global_top_5 is not None:
+        print('여기 둘다 값있네..')
+    return top_5
+
 
 
 
@@ -60,8 +79,6 @@ tools = [
         "strict": True
     }
 ]
-
-
 
 
 load_dotenv()
@@ -133,26 +150,33 @@ async def hello(req: MessageRequest):
             # 결과
             # 주소 5개 (시/도, 구/면/읍 (ex: 서울특별시 강남구 등)
             # 머신러닝 분석 시각화 자료(그래프? 등)
-            travel_list(**args)
+            top_5 = travel_list(**args)
 
             # 3. API + 웹 서치
+            # pass
 
             # 4. 최종 자연어 생성 (GPT)
-
+            # pass
+            reply = json.dumps(top_5.to_dict(orient="records"), ensure_ascii=False)
+            reply = top_5.to_string(index=False)
+            
+            print('reply : ', reply)
+            print('reply : type', type(reply))
             # ----------------------밑 테스트용(삭제할것)----------------------- #
-            print('intent : ', intent)
-            final_prompt = f"""
-            사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme},
-            여행 기간은 {req.duration} 입니다.
-            이 사용자에게 어울리는 여행지를 추천해 주세요. 요청: {req.message}
-            """
+        #if 0
+            # print('intent : ', intent)
+            # final_prompt = f"""
+            # 사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme},
+            # 여행 기간은 {req.duration} 입니다.
+            # 이 사용자에게 어울리는 여행지를 추천해 주세요. 요청: {req.message}
+            # """
 
-            response = client.chat.completions.create(
-            model="gpt-4.1",
-            messages=[{"role": "user", "content": final_prompt}]
-            )
-            reply = response.choices[0].message.content
-            chat_session.append({"role": "assistant", "content": reply})
+            # response = client.chat.completions.create(
+            # model="gpt-4.1",
+            # messages=[{"role": "user", "content": final_prompt}]
+            # )
+            # reply = response.choices[0].message.content
+            # chat_session.append({"role": "assistant", "content": reply})
 
             # ----------------------밑 테스트용(삭제할것)----------------------- #
         else:
@@ -166,6 +190,8 @@ async def hello(req: MessageRequest):
                 messages = chat_session
             )
             reply = response.choices[0].message.content
+            print('reply : ', reply)
+            print('reply type : ', type(reply))
             chat_session.append({"role": "assistant", "content": reply})
 
         #user_input = response.choices[0].message.content
@@ -188,12 +214,15 @@ async def hello(req: MessageRequest):
 
 @app.get("/api/graph")
 def get_graph_image():
-    plt.figure()
-    plt.plot([1, 2, 3, 4], [10, 20, 10, 30])
-    plt.title("PNG 이미지 그래프")
+    global global_model, global_top_5
+    
+    if global_top_5 is None or global_model is None:
+        print("값이 없어서 그래프를 그릴 수가 없음")
+        raise HTTPException(status_code=400, detail="그래프를 그릴 수 없습니다.")
 
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
+    print("값있는데..?")
+    filepath = './model/final_file_cleaned.csv'
+    buf = show_graph(global_model, global_top_5, filepath)
+    
 
     return StreamingResponse(buf, media_type="image/png")

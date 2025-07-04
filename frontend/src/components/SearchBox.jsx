@@ -126,29 +126,28 @@ export default function SearchBox() {
       <div className="combobox">
         <select value={age} onChange={(e) => setAge(e.target.value)}>
           <option value="">연령대</option>
-          <option value="20대">20대</option>
-          <option value="30대">30대</option>
-          <option value="40대">40대</option>
-          <option value="50대">50대</option>
-          <option value="60대">60대</option>
-          <option value="70대 이상">70대 이상</option>
+          <option value="20">20대</option>
+          <option value="30">30대</option>
+          <option value="40">40대</option>
+          <option value="50">50대</option>
+          <option value="60">60대</option>
+          <option value="70">70대 이상</option>
         </select>
 
         <select value={gender} onChange={(e) => setGender(e.target.value)}>
           <option value="">성별</option>
-          <option value="남성">남성</option>
-          <option value="여성">여성</option>
+          <option value="남">남성</option>
+          <option value="여">여성</option>
         </select>
 
         <select value={theme} onChange={(e) => setTheme(e.target.value)}>
           <option value="">여행 테마</option>
-          <option value="자연">자연</option>
-          <option value="역사">역사</option>
-          <option value="휴양">휴양</option>
-          <option value="맛집 탐방">맛집 탐방</option>
-          <option value="액티비티">액티비티</option>
-          <option value="쇼핑">쇼핑</option>
-          <option value="관광">관광</option>
+          <option value="1">취식</option>
+          <option value="2">쇼핑</option>
+          <option value="3">체험/입장/관람</option>
+          <option value="4">단순 구경/산책</option>
+          <option value="5">휴식</option>
+          <option value="6">기타활동</option>
         </select>
 
         <select value={duration} onChange={(e) => setDuration(e.target.value)}>
