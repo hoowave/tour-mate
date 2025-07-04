@@ -76,9 +76,17 @@ async def hello(req: MessageRequest):
     except Exception as e:
         return {"reply": f"OpenAI 호출 오류: {str(e)}"}
     
+    test_input = "1. 첫번쨰 사진 https://images.unsplash.com/photo-1506744038136-46273834b3fb\n" \
+    "2. 두번째 사진 이거는 답변을 좀 길게 해봐야겠다. ㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅㅅ https://images.unsplash.com/photo-1506744038136-46273834b3fb " \
+    "3. 이거는 세번째 사진이여https://images.unsplash.com/photo-1506744038136-46273834b3fb\n" \
+    "4. 이거는 네번째 사진이렘ㄴㅇㅁㅈㅇhttps://images.unsplash.com/photo-1506744038136-46273834b3fb"
+
+    mark_input = "wadsdwads adwasdawd asd awdasdwasdaw dad![추천 이미지](https://images.unsplash.com/photo-1506744038136-46273834b3fb)daw asdwads"
     # return {"reply": user_input,
     #         "image_url":"https://images.unsplash.com/photo-1506744038136-46273834b3fb"}
 
+    # return {"reply": mark_input }
+    # return {"reply": test_input }
     return {"reply": user_input }
 
 @app.get("/api/graph")
