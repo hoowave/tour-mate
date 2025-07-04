@@ -175,7 +175,7 @@ export default function SearchBox() {
                     {Array.isArray(chat.message) ? (
                       chat.message.map((msg, idx) => (
                         <div key={idx} style={{ marginBottom: '10px' }}>
-                          {msg.text && <div style={{ marginBottom: '5px' }}>{msg.text}</div>}
+                          {msg.text && <div style={{ marginBottom: '10px' }}>{msg.text}</div>}
                           {msg.image && (
                             <img
                               src={msg.image}

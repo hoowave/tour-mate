@@ -3,9 +3,8 @@ html, body {
   padding: 0;
   background-color: #0a001a;
   font-family: 'Arial', sans-serif;
-  /* overflow: hidden;      페이지 전체 스크롤 금지 */
-  height: 100vh;         /* 뷰포트 기준 높이 고정 */
-  width: 100vw;          /* 가로 고정 */
+  height: 100vh;         
+  width: 100vw;          
   overscroll-behavior: none;
 }
 
@@ -15,9 +14,9 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* 초기에는 중앙 정렬 */
+  justify-content: center; 
   transition: all 0.5s ease;
-  overflow: hidden; /* ✅ 내부 넘침 차단 */
+  overflow: hidden; 
   color: white;
   padding: 0;
   box-sizing: border-box;
@@ -25,7 +24,7 @@ html, body {
 
 .main-container.shifted {
   justify-content: flex-start;
-  padding-top: 50px; /* 채팅 있을 때 아래로 */
+  padding-top: 50px; 
 }
 
 .title {
