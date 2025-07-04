@@ -24,7 +24,7 @@ const GraphPage = () => {
 
   return (
     <div className="graph-container">
-      <h2 className="graph-title">여행 목록 만족도 그래프</h2>
+      <h2 className="graph-title"><span className="highlight">여행 추천 리스트</span> 만족도 그래프</h2>
       {error ? (
         <p className="graph-error">그래프를 그릴 수 없습니다.</p>
       ) : imgSrc ? (

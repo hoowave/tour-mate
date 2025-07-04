@@ -17,7 +17,7 @@ export default function SearchBox() {
 
     const extractTextImagePairs = (text) => {
       const markdownImgRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/gi;
-      const urlRegex = /(https?:\/\/[^\s)]+\.(jpg|jpeg|png|gif|webp))/gi;
+      const urlRegex = /(https?:\/\/[^\s)]+\.(jpg|jpeg|png|gif|webp)|https?:\/\/images\.unsplash\.com\/[^\s)]+)/gi; // unsplash 빼면 예제 이미지 테스트 못함
 
       const lines = text.split(/\n+/);
 
