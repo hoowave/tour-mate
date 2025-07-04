@@ -6,17 +6,20 @@ import numpy as np
 def recommend_travel_places(
     gender_str: str,
     age_grp: int,
-    travel_companions_num: int,
-    travel_styl_1: int,
-    travel_styl_2: int,
-    travel_styl_3: int,
-    travel_styl_4: int,
-    travel_styl_5: int,
-    travel_styl_6: int,
-    travel_styl_7: int,
-    travel_styl_8: int,
-    activity_type: int, # ACTIVITY_TYPE_CD
-    travel_status_accompany_str: str, # TRAVEL_STATUS_ACCOMPANY (문자열)
+    activity_type: int,
+    
+    # 디폴트 값 설정
+    travel_companions_num: int = 0,
+    travel_styl_1: int = 4,
+    travel_styl_2: int = 4,
+    travel_styl_3: int = 4,
+    travel_styl_4: int = 4,
+    travel_styl_5: int = 4,
+    travel_styl_6: int = 4,
+    travel_styl_7: int = 4,
+    travel_styl_8: int = 4,
+    travel_status_accompany_str: str = '나홀로 여행',
+
     # 모델 및 인코더 파일 경로 (기본값으로 설정)
     model_path: str = 'catboost_travel_satisfaction_model.joblib',
     encoders_path: str = 'label_encoders_for_catboost.joblib',
@@ -57,20 +60,20 @@ def recommend_travel_places(
 
     # 3. 사용자 고정 특성 데이터 구성
     user_fixed_data = {
-        'GENDER': user_gender_encoded,
-        'AGE_GRP': age_grp,
-        'TRAVEL_STYL_1': travel_styl_1,
-        'TRAVEL_STYL_2': travel_styl_2,
-        'TRAVEL_STYL_3': travel_styl_3,
-        'TRAVEL_STYL_4': travel_styl_4,
-        'TRAVEL_STYL_5': travel_styl_5,
-        'TRAVEL_STYL_6': travel_styl_6,
-        'TRAVEL_STYL_7': travel_styl_7,
-        'TRAVEL_STYL_8': travel_styl_8,
-        'TRAVEL_COMPANIONS_NUM': travel_companions_num,
-        'TRAVEL_STATUS_ACCOMPANY': user_travel_status_accompany_encoded,
-        'ACTIVITY_TYPE_CD': user_activity_type_encoded
-    }
+    'GENDER': user_gender_encoded,
+    'AGE_GRP': age_grp,
+    'TRAVEL_STYL_1': travel_styl_1,
+    'TRAVEL_STYL_2': travel_styl_2,
+    'TRAVEL_STYL_3': travel_styl_3,
+    'TRAVEL_STYL_4': travel_styl_4,
+    'TRAVEL_STYL_5': travel_styl_5,
+    'TRAVEL_STYL_6': travel_styl_6,
+    'TRAVEL_STYL_7': travel_styl_7,
+    'TRAVEL_STYL_8': travel_styl_8,
+    'TRAVEL_COMPANIONS_NUM': travel_companions_num,
+    'TRAVEL_STATUS_ACCOMPANY': user_travel_status_accompany_encoded,
+    'ACTIVITY_TYPE_CD': user_activity_type_encoded}
+
 
     # 4. 모든 VISIT_AREA_NM 후보에 대한 배치 예측 준비
     # LabelEncoder의 클래스 개수만큼 인코딩 숫자 리스트 생성
@@ -117,23 +120,9 @@ if __name__ == '__main__':
     user_recommendations = recommend_travel_places(
         gender_str='남',
         age_grp=20,
-        travel_companions_num=0,
-        travel_styl_1=4,
-        travel_styl_2=4,
-        travel_styl_3=4,
-        travel_styl_4=4,
-        travel_styl_5=4,
-        travel_styl_6=4,
-        travel_styl_7=4,
-        travel_styl_8=4,
         activity_type=4,
-        travel_status_accompany_str='나홀로 여행' # 자녀 동반 여행, 부모 동반 여행, 2인 여행(가족 외), 3인 이상 여행(가족 외), 3대 동반 여행(친척 포함)
-
-
-
-
-
     )
+    
 
     if not user_recommendations.empty:
         print("\n--- 사용자 맞춤형 여행지 추천 결과 ---")
