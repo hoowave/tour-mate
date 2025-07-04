@@ -11,34 +11,13 @@ def get_service():
 
 @router.get("/")
 def index():
-    return {"Hello": "World"}
+    return "Welcome to the Tour Mate API!"
 
 # 실제 요청받는 API
-@router.post("/request")
+@router.post("/api/chat")
 def reuqest(
-    request: RequestDto,
+    request_dto: RequestDto,
     service: Service = Depends(get_service)
 ):
-    service.kto_api_request()
-    return {
-        "age_group": request.age_group,
-        "gender": request.gender,
-        "theme": request.theme,
-        "days": request.days
-    }
-
-# 테스트용
-@router.get("/test")
-def test(
-    service: Service = Depends(get_service)
-):
-    response = service.request()
-    return response
-
-# 테스트용
-@router.get("/test2")
-def test(
-    service: Service = Depends(get_service)
-):
-    response = service.kto_api_test()
-    return response
+    response = service.request(request_dto)
+    return {"reply": response}

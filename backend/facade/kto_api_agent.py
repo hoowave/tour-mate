@@ -14,6 +14,7 @@ class KtoApiAgent:
         start_date = (datetime.today() - timedelta(days=7)).strftime("%Y%m%d")
         end_date = (datetime.today() + timedelta(days=7)).strftime("%Y%m%d")
         print(f"{start_date}일부터 {end_date}일까지의 축제 정보를 요청합니다.")
+        print("===== KTO Request ... =====")
         params = {
             "numOfRows": 10,
             "pageNo": 1,
@@ -41,6 +42,7 @@ class KtoApiAgent:
             items = []
 
         dto_list = [KtoApiDto.from_dict(item) for item in items]
+        print("===== KTO OK! ... =====")
         return dto_list
 
     def get_si_code(self, region_name):

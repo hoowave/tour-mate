@@ -21,6 +21,4 @@ class CsvDto:
             CsvDto(addr1="광안리 해수욕장", addr2="부산", addr3="수영구"),
             CsvDto(addr1="해운대 해수욕장", addr2="부산", addr3="해운대구"),
             CsvDto(addr1="경복궁", addr2="서울", addr3="종로구"),
-            CsvDto(addr1="남산타워", addr2="서울", addr3="용산구"),
-            CsvDto(addr1="정동진 해변", addr2="강원특별자치도", addr3="강릉시")
         ]
