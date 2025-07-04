@@ -15,15 +15,59 @@ export default function SearchBox() {
 
     const chatEndRef = useRef(null);
 
+    const extractTextImagePairs = (text) => {
+      const markdownImgRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/gi;
+      const urlRegex = /(https?:\/\/[^\s)]+\.(jpg|jpeg|png|gif|webp)|https?:\/\/images\.unsplash\.com\/[^\s)]+)/gi;
+
+      const lines = text.split(/\n+/);
+
+      return lines.flatMap(line => {
+        const results = [];
+
+        // 1. 먼저 마크다운 이미지 처리
+        let markdownProcessedLine = line;
+        const markdownMatches = [...line.matchAll(markdownImgRegex)];
+
+        markdownMatches.forEach((match) => {
+          const fullMatch = match[0];
+          const url = match[1];
+          const index = markdownProcessedLine.indexOf(fullMatch);
+          const beforeText = markdownProcessedLine.slice(0, index).trim();
+          if (beforeText) results.push({ text: beforeText, image: null });
+          results.push({ text: null, image: url });
+          markdownProcessedLine = markdownProcessedLine.slice(index + fullMatch.length);
+        });
+
+        // 2. 남은 텍스트에 일반 이미지 URL 처리
+        const matches = [...markdownProcessedLine.matchAll(urlRegex)];
+        let remaining = markdownProcessedLine;
+
+        matches.forEach((match) => {
+          const url = match[0];
+          const index = remaining.indexOf(url);
+          const beforeText = remaining.slice(0, index).trim();
+          if (beforeText) {
+            results.push({ text: beforeText, image: null });
+          }
+          results.push({ text: null, image: url });
+          remaining = remaining.slice(index + url.length);
+        });
+
+        if (remaining.trim()) {
+          results.push({ text: remaining.trim(), image: null });
+        }
+
+        return results;
+      });
+    };
+
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        // 사용자 메시지 추가
         setChatLog((prev) => [...prev, { role: 'user', message: input }]);
         setInput('');
         setLoading(true);
 
-        // "답변 작성 중..." 임시 메시지
         setChatLog((prev) => [...prev, { role: 'bot', message: '답변 작성 중...' }]);
 
         try {
@@ -34,12 +78,18 @@ export default function SearchBox() {
             theme,
             duration
         });
+        console.log(res.data.reply)
+        const pairs = extractTextImagePairs(res.data.reply);
 
+        // const replyMessage = {
+        //   role: 'bot',
+        //   message: res.data.reply,
+        //   image: res.data.image_url || null
+        // }
         const replyMessage = {
           role: 'bot',
-          message: res.data.reply,
-          image: res.data.image_url || null
-        }
+          message: pairs
+        };
 
         // 마지막 메시지 업데이트
         setChatLog((prev) => {
@@ -59,11 +109,6 @@ export default function SearchBox() {
         setLoading(false);
     };
 
-
-
-
-
-
   // 자동 스크롤 맨 아래로
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -71,17 +116,14 @@ export default function SearchBox() {
 
   const hasChat = chatLog.length > 0;
 
-
-
-
   return (
     <div className={`main-container ${hasChat ? 'shifted' : ''}`}>
       <h1 className="title">
         Search with <span className="highlight">TourMate</span>
       </h1>
 
-      {/* 필터 UI */}
-      <div className="filters">
+      {/* 콤보박스 UI */}
+      <div className="combobox">
         <select value={age} onChange={(e) => setAge(e.target.value)}>
           <option value="">연령대</option>
           <option value="20대">20대</option>
@@ -129,18 +171,27 @@ export default function SearchBox() {
                 className={`chat-msg ${chat.role === 'user' ? 'right' : 'left'}`}
               >
                 <div className="msg-wrapper">
-                  <div className="bubble">{chat.message}</div>
-                    {chat.image && (
-                    <img
-                      src={chat.image}
-                      alt="추천 이미지"
-                      className="chat-image"
-                      onClick={() => setModalImage(chat.image)}
-                    />
+                  <div className="bubble">
+                    {Array.isArray(chat.message) ? (
+                      chat.message.map((msg, idx) => (
+                        <div key={idx} style={{ marginBottom: '10px' }}>
+                          {msg.text && <div style={{ marginBottom: '5px' }}>{msg.text}</div>}
+                          {msg.image && (
+                            <img
+                              src={msg.image}
+                              alt={`추천 이미지 ${idx + 1}`}
+                              className="chat-image"
+                              onClick={() => setModalImage(msg.image)}
+                            />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div>{chat.message}</div>
                     )}
                   </div>
                 </div>
-              
+              </div>
             ))}
             <div ref={chatEndRef} />
           </div>
