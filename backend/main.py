@@ -163,7 +163,6 @@ async def hello(req: MessageRequest):
             print('reply : ', reply)
             print('reply : type', type(reply))
             # ----------------------밑 테스트용(삭제할것)----------------------- #
-        #if 0
             # print('intent : ', intent)
             # final_prompt = f"""
             # 사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme},
@@ -176,7 +175,7 @@ async def hello(req: MessageRequest):
             # messages=[{"role": "user", "content": final_prompt}]
             # )
             # reply = response.choices[0].message.content
-            # chat_session.append({"role": "assistant", "content": reply})
+            chat_session.append({"role": "assistant", "content": reply})
 
             # ----------------------밑 테스트용(삭제할것)----------------------- #
         else:
