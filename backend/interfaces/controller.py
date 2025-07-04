@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from typing import Union
+from fastapi.middleware.cors import CORSMiddleware
 
 from interfaces.dto.request_dto import RequestDto
 from service.service import Service
@@ -15,9 +15,17 @@ def index():
 
 # 실제 요청받는 API
 @router.post("/api/chat")
-def reuqest(
+def request(
     request_dto: RequestDto,
     service: Service = Depends(get_service)
 ):
     response = service.request(request_dto)
     return {"reply": response}
+
+# 테스트용 API
+@router.get("/api/test")
+def test(
+    service: Service = Depends(get_service)
+):
+    service.test()
+    return {"reply": "Test completed successfully!"}

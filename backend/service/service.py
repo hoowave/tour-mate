@@ -1,6 +1,6 @@
 from facade.open_ai_agent import OpenAIAgent
 from facade.kto_api_agent import KtoApiAgent
-from facade.csv_agent import CSVAgent
+from facade.catboost_agent import CatboostAgent
 from facade.dto.csv_dto import CsvDto as CSVDto
 from interfaces.dto.request_dto import RequestDto
 
@@ -8,7 +8,7 @@ class Service:
     def __init__(self):
         self.__open_ai_agent = OpenAIAgent()
         self.__kto_api_agent = KtoApiAgent()
-        self.__csv_agent = CSVAgent()
+        self.__catboost_agent = CatboostAgent()
 
     def request(self, request_dto: RequestDto):
         # 머신러닝 모델을 사용하여 추천 요청
@@ -56,9 +56,4 @@ class Service:
 
     # 테스트용
     def test(self):
-        # OpenAI Web Search 요청
-        satis = "5점 만점에 4점"
-        partner = "연인"
-        prompt=f"장소는 부산,수영구이고, 만족도는 {satis}이며, 여행 파트너는 {partner}인 여행지 추천을 해줘."
-        web_search_response = self.__open_ai_agent.get_news(prompt=prompt)
-        print("Web Search Response:", web_search_response)
+        self.__catboost_agent.request()
