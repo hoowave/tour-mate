@@ -130,8 +130,7 @@ export default function SearchBox() {
           <option value="30">30대</option>
           <option value="40">40대</option>
           <option value="50">50대</option>
-          <option value="60">60대</option>
-          <option value="70">70대 이상</option>
+          <option value="60">60대 이상</option>
         </select>
 
         <select value={gender} onChange={(e) => setGender(e.target.value)}>
