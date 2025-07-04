@@ -17,7 +17,7 @@ export default function SearchBox() {
 
     const extractTextImagePairs = (text) => {
       const markdownImgRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/gi;
-      const urlRegex = /(https?:\/\/[^\s)]+\.(jpg|jpeg|png|gif|webp)|https?:\/\/images\.unsplash\.com\/[^\s)]+)/gi;
+      const urlRegex = /(https?:\/\/[^\s)]+\.(jpg|jpeg|png|gif|webp))/gi;
 
       const lines = text.split(/\n+/);
 
@@ -205,7 +205,7 @@ export default function SearchBox() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button className="submit-btn">➤</button>
+        <button className="submit-btn" onClick={handleSend}>➤</button>
       </div>
       {modalImage && (
         <div className="image-modal" onClick={() => setModalImage(null)}>
