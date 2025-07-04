@@ -26,7 +26,7 @@ const GraphPage = () => {
     <div className="graph-container">
       <h2 className="graph-title">여행 목록 만족도 그래프</h2>
       {error ? (
-        <p className="graph-error">⚠️ 그래프를 그릴 수 없습니다.</p>
+        <p className="graph-error">그래프를 그릴 수 없습니다.</p>
       ) : imgSrc ? (
         <img src={imgSrc} alt="그래프" className="graph-image" />
       ) : (
