@@ -1,25 +1,33 @@
 from facade.open_ai_agent import OpenAIAgent
 from facade.kto_api_agent import KtoApiAgent
-from facade.catboost_agent import CatboostAgent
-from facade.dto.csv_dto import CsvDto as CSVDto
+from facade.catboost_agent.recommend_travel_places import recommend_travel_places
+from facade.dto.recommandtion_dto import RecommendationDto
 from interfaces.dto.request_dto import RequestDto
+import time
 
 class Service:
     def __init__(self):
         self.__open_ai_agent = OpenAIAgent()
         self.__kto_api_agent = KtoApiAgent()
-        self.__catboost_agent = CatboostAgent()
 
     def request(self, request_dto: RequestDto):
+        start_total = time.time()
         # 머신러닝 모델을 사용하여 추천 요청
-        # csv_response = self.__csv_agent.request(1,20,3) # 남성, 20대, 활동코드 3
-        csv_response = CSVDto.get_sample_data()  # 샘플 데이터 사용
-        print("CSV Agent Response:", csv_response)
+        start_model = time.time()
+        recommend_response = self.__get_recommendation(request_dto.gender,request_dto.age,request_dto.theme)
+        end_model = time.time()
+        print(f"[소요시간] 추천 모델: {end_model - start_model:.3f}초")
+        print(f"====={request_dto.age}대 {request_dto.gender}의 =====")
+        for recommend in recommend_response:
+            print(f"추천 여행지:{recommend.place_name}, 예상 만족도: {recommend.expected_satisfaction}, 시도: {recommend.sido}, 시군구: {recommend.sigungu}")
+        # ------------------------------------------------------
+
         kto_all = []
         web_all = []
-        for csv in csv_response:
-            si_kor = csv.addr2
-            gu_kor = csv.addr3
+        start_external = time.time()
+        for recommend in recommend_response:
+            si_kor = recommend.sido
+            gu_kor = recommend.sigungu
             
             # 한국관광공사 API 요청
             si_code = self.__kto_api_agent.get_si_code(region_name=si_kor)
@@ -30,18 +38,13 @@ class Service:
             kto_all.extend(kto_response)
 
             # OpenAI Web Search 요청
-            satis = "5점 만점에 4점"
-            partner = "연인"
-            prompt=f"장소는 {si_kor},{gu_kor}이고, 만족도는 {satis}이며, 여행 파트너는 {partner}인 여행지 추천을 해줘."
+            prompt=f"장소는 {si_kor},{gu_kor}이고, 예상 만족도는 {recommend.expected_satisfaction}인 여행지 추천을 해줘."
             web_search_response = self.__open_ai_agent.get_news(prompt=prompt)
             web_all.append(web_search_response)
-
-        satis = "5점 만점에 4점"
-        partner = "연인"
+        end_external = time.time()
+        print(f"[소요시간] 한국관광공사+웹검색: {end_external - start_external:.3f}초")
+        start_final = time.time()
         prompt=f'''
-
-            - 만족도는 {satis}이며,
-            - 여행 파트너는 {partner}라면,
             - {request_dto.duration}일 동안,
             - {request_dto.message}에 맞는 여행지를 추천해줘.
             '''
@@ -50,10 +53,32 @@ class Service:
             kto_all=kto_all,
             web_all=web_all
         )
+        end_final = time.time()
+        print(f"[소요시간] 최종 OpenAI 요청: {end_final - start_final:.3f}초")
+
+        # 4) 총 소요
+        end_total = time.time()
+        print(f"[소요시간] 총합: {end_total - start_total:.3f}초")
         return last_response
 
-
+    def __get_recommendation(self, gender, age, activity_type):
+        df = recommend_travel_places(
+            gender_str=gender,
+            age_grp=age,
+            activity_type=activity_type,
+        )
+        dto_list = [
+            RecommendationDto(
+                place_name=row["여행지"],
+                expected_satisfaction=row["예상 만족도"],
+                sido=row["시도"],
+                sigungu=row["시군구"]
+            )
+            for _, row in df.iterrows()
+        ]
+        return dto_list
 
     # 테스트용
     def test(self):
-        self.__catboost_agent.request()
+        response = self.__get_recommendation("남","20",3)
+        print("Test Response:", response)
