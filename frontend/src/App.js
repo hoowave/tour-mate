@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import GraphPage from './pages/graph';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
+import NotFound from './pages/NotFound';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -26,6 +27,7 @@ function App() {
 
         <Route path='/' element={<SearchBox />} />
         <Route path='/graph' element={<GraphPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       
     </BrowserRouter>
