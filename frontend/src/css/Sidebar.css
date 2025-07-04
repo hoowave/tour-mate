@@ -1,0 +1,33 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0px;
+  width: 150px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 20px;
+  transition: left 0.3s ease;
+  z-index: 200;
+}
+
+.sidebar.open {
+  left: -150px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 150px;
+}
+
+.sidebar ul li {
+  margin: 50px 0;
+  cursor: pointer;
+}
+
+.sidebar a {
+  color: white;               /* 텍스트 색상 흰색 */
+  text-decoration: none;      /* 밑줄 제거 */
+  font-size: 16px;
+}

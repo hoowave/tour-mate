@@ -1,31 +1,34 @@
 from fastapi import APIRouter, Depends
-from typing import Union
+from fastapi.responses import StreamingResponse
 
 from interfaces.dto.request_dto import RequestDto
 from service.service import Service
 
 router = APIRouter()
 
+service = Service()
+
 def get_service():
-    return Service()
+    return service
 
 @router.get("/")
 def index():
-    return {"Hello": "World"}
+    return "Welcome to the Tour Mate API!"
 
-@router.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-@router.post("/request")
-def reuqest(
-    request: RequestDto,
+# 실제 요청받는 API
+@router.post("/api/chat")
+def request(
+    request_dto: RequestDto,
     service: Service = Depends(get_service)
-    ):
-    service.kto_api_request()
-    return {
-        "age_group": request.age_group,
-        "gender": request.gender,
-        "theme": request.theme,
-        "days": request.days
-    }
+):
+    response = service.request(request_dto)
+    return {"reply": response}
+
+# 테스트용 API
+@router.get("/api/graph")
+def graph(
+    service: Service = Depends(get_service)
+):
+    print("Graph API called")
+    response = service.graph()
+    return StreamingResponse(response, media_type="image/png")
