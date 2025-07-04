@@ -8,6 +8,60 @@ from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 import io
 from fastapi.responses import StreamingResponse
+import json
+
+
+def travel_list(Age, Gender, Theme):
+    print('Age : ', Age)
+    print('Gender : ', Gender)
+    print('Theme : ', Theme)
+    print("travel_list!!")
+
+
+
+def request_function_call(age, gender, theme, duration):
+    func_call_msg = f"나이: {age}, 성별: {gender}, 테마: {theme}, 기간: {duration}"
+    input_messages = [
+        {'role': 'user', 'content': func_call_msg}
+    ]
+
+    response = client.responses.create(
+    model ='gpt-4.1',
+    input=input_messages,
+    tools = tools
+    )
+    print(response)
+    
+    tool_call = response.output[0]
+    args = json.loads(tool_call.arguments)
+
+    if tool_call.name == "travel_list":
+        return args
+    else:
+        return False
+    
+
+tools = [
+    {
+        "type": "function",
+        "name": "travel_list",
+        "description": "여행지 추천 리스트 제공",
+        "parameters": {
+            "type": "object",
+            "properties":{
+                "Age": {"type": "number"},
+                "Gender": {"type": "number"},
+                "Theme": {"type": "string"}
+            },
+            "required": ["Age", "Gender", "Theme"],
+            "additionalProperties": False
+        },
+        "strict": True
+    }
+]
+
+
+
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -47,21 +101,41 @@ async def hello(req: MessageRequest):
         - 여행추천
         - 일반대화
         """
-
+        # 1. 의도파악
         intent_response = client.chat.completions.create(
             model="gpt-4.1",
-            messages=[{"role": "user", "content": intent_check_prompt}]
+            messages=[{"role": "user", "content": intent_check_prompt}],
         )
-        intent = intent_response.choices[0].message.content.strip()
 
+        intent = intent_response.choices[0].message.content.strip()
+        
         if "여행추천" in intent:
-            # 여기면 머신러닝 타서 함수 실행해야함.
+            # 2. Function Call 호출(머신러닝)
+            args = request_function_call(req.age, req.gender, req.theme, req.duration)
+
+            if args==False:
+                return {"reply": "Function Calling 호출 오류"}
+            
+            # 결과
+            # 주소 5개 (시/도, 구/면/읍 (ex: 서울특별시 강남구 등)
+            # 머신러닝 분석 시각화 자료(그래프? 등)
+            travel_list(**args)
+
+            # 3. API + 웹 서치
+
+
+            # 4. 최종 자연어 생성 (GPT)
+
+
+
+            # ----------------------밑 테스트용(삭제할것)----------------------- #
             print('intent : ', intent)
             final_prompt = f"""
             사용자의 연령대는 {req.age}, 성별은 {req.gender}, 선호하는 여행 테마는 {req.theme},
             여행 기간은 {req.duration} 입니다.
             이 사용자에게 어울리는 여행지를 추천해 주세요. 요청: {req.message}
             """
+            # ----------------------밑 테스트용(삭제할것)----------------------- #
         else:
             print('intent : ', intent)
             final_prompt = req.message  # 일반 대화는 원문 그대로
