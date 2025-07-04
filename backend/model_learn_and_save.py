@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import joblib
 import json
 
-df = pd.read_csv('backend/final_file_test.csv')
+df = pd.read_csv('backend/final_file_cleaned.csv')
 
 # 결측치 처리
 df.dropna(subset=['ROAD_NM_ADDR'], inplace=True)
