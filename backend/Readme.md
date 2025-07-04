@@ -134,16 +134,34 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-### 6. API 문서 확인
-
-서버 실행 후 다음 URL에서 API 문서를 확인할 수 있습니다:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
-
 ## 주요 API 엔드포인트
 
-- `POST /recommend`: 여행지 추천 요청
-- `GET /health`: 서버 상태 확인
+### 기본 엔드포인트
+- `GET /`: API 환영 메시지
+
+### 챗봇 추천 API
+- `POST /api/chat`: 여행지 추천 요청
+  - **Request Body**:
+    ```json
+    {
+      "message": "string",     // 자연어 처리용 사용자 메시지
+      "age": "string",         // 머신러닝용 나이 정보
+      "gender": "string",      // 머신러닝용 성별 정보
+      "theme": "string",       // 머신러닝용 여행 테마
+      "duration": "string"     // 자연어 처리용 여행 기간
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "reply": "string"        // AI 추천 답변
+    }
+    ```
+
+### 데이터 시각화 API
+- `GET /api/graph`: 여행 추천 결과 그래프 생성
+  - **Response**: PNG 이미지 (StreamingResponse)
+  - **용도**: 프론트엔드/모바일에서 그래프 표시용
 
 ## 기술 스택
 
