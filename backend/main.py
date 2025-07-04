@@ -10,6 +10,7 @@ import io
 from fastapi.responses import StreamingResponse
 import json
 
+chat_session = [] # 대화 세션 유지 용도
 
 def travel_list(Age, Gender, Theme):
     print('Age : ', Age)
@@ -83,14 +84,26 @@ class MessageRequest(BaseModel):
     theme: str
     duration: str
 
+@app.post("/api/session_reset")
+async def reset():
+    try:
+        chat_session.clear()
+        print('초기화')
+    except Exception as e:
+        print(f"/app/session_reset Error : {e}")
+        
+
 @app.post("/api/chat")
 async def hello(req: MessageRequest):
     try:
+        
+
         print('age : ', req.age)
         print('gender : ', req.gender)
         print('theme : ', req.theme)
         print('message : ', req.message)
         print('duration : ', req.duration)
+        
 
         intent_check_prompt = f"""
         다음 문장이 여행지 추천을 원하거나 여행 관련 요청인지 판단해줘.
@@ -108,8 +121,9 @@ async def hello(req: MessageRequest):
         )
 
         intent = intent_response.choices[0].message.content.strip()
-        
+
         if "여행추천" in intent:
+            chat_session.append({"role": "user", "content": req.message})
             # 2. Function Call 호출(머신러닝)
             args = request_function_call(req.age, req.gender, req.theme, req.duration)
 
@@ -123,10 +137,7 @@ async def hello(req: MessageRequest):
 
             # 3. API + 웹 서치
 
-
             # 4. 최종 자연어 생성 (GPT)
-
-
 
             # ----------------------밑 테스트용(삭제할것)----------------------- #
             print('intent : ', intent)
@@ -135,17 +146,29 @@ async def hello(req: MessageRequest):
             여행 기간은 {req.duration} 입니다.
             이 사용자에게 어울리는 여행지를 추천해 주세요. 요청: {req.message}
             """
+
+            response = client.chat.completions.create(
+            model="gpt-4.1",
+            messages=[{"role": "user", "content": final_prompt}]
+            )
+            reply = response.choices[0].message.content
+            chat_session.append({"role": "assistant", "content": reply})
+
             # ----------------------밑 테스트용(삭제할것)----------------------- #
         else:
+            chat_session.append({"role": "user", "content": req.message})
             print('intent : ', intent)
             final_prompt = req.message  # 일반 대화는 원문 그대로
 
-        response = client.chat.completions.create(
-            model="gpt-4.1",
-            messages=[{"role": "user", "content": final_prompt}]
-)
+            response = client.chat.completions.create(
+                model="gpt-4.1",
+                #messages=[{"role": "user", "content": final_prompt}]
+                messages = chat_session
+            )
+            reply = response.choices[0].message.content
+            chat_session.append({"role": "assistant", "content": reply})
 
-        user_input = response.choices[0].message.content
+        #user_input = response.choices[0].message.content
 
     except Exception as e:
         return {"reply": f"OpenAI 호출 오류: {str(e)}"}
@@ -161,7 +184,7 @@ async def hello(req: MessageRequest):
 
     # return {"reply": mark_input }
     # return {"reply": test_input }
-    return {"reply": user_input }
+    return {"reply": reply }
 
 @app.get("/api/graph")
 def get_graph_image():
