@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from interfaces.dto.request_dto import RequestDto
 from service.service import Service
 
 router = APIRouter()
 
+service = Service()
+
 def get_service():
-    return Service()
+    return service
 
 @router.get("/")
 def index():
@@ -23,9 +25,10 @@ def request(
     return {"reply": response}
 
 # 테스트용 API
-@router.get("/api/test")
-def test(
+@router.get("/api/graph")
+def graph(
     service: Service = Depends(get_service)
 ):
-    service.test()
-    return {"reply": "Test completed successfully!"}
+    print("Graph API called")
+    response = service.graph()
+    return StreamingResponse(response, media_type="image/png")

@@ -1,14 +1,17 @@
 from facade.open_ai_agent import OpenAIAgent
 from facade.kto_api_agent import KtoApiAgent
 from facade.catboost_agent.recommend_travel_places import recommend_travel_places
+from facade.catboost_agent.recommend_travel_places import show_graph
 from facade.dto.recommandtion_dto import RecommendationDto
 from interfaces.dto.request_dto import RequestDto
 import time
+import os
 
 class Service:
     def __init__(self):
         self.__open_ai_agent = OpenAIAgent()
         self.__kto_api_agent = KtoApiAgent()
+        self.__df = None
 
     def request(self, request_dto: RequestDto):
         start_total = time.time()
@@ -67,6 +70,7 @@ class Service:
             age_grp=age,
             activity_type=activity_type,
         )
+        self.__df = df
         dto_list = [
             RecommendationDto(
                 place_name=row["여행지"],
@@ -79,6 +83,12 @@ class Service:
         return dto_list
 
     # 테스트용
-    def test(self):
-        response = self.__get_recommendation("남","20",3)
-        print("Test Response:", response)
+    def graph(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        csv_path = os.path.join(base_dir, "final_file_cleaned.csv")
+        print(f"CSV Path: {csv_path}")
+        if(self.__df is None):
+            print("최초 추천을 먼저 요청해주세요.")
+            return None
+        img_buf = show_graph(self.__df, csv_path)
+        return img_buf
